@@ -17,9 +17,9 @@ namespace family {
             this->gender=0;
             this->father = this->Mother = this->son = NULL;
         }
-        Tree(string name , Tree *son){
+        Tree(string name , Tree &son){
             this->name=name;
-            this->son=son;
+            this->son=&son;
             this->Mother=this->father=NULL;
         }
 Tree & addFather(string son , string father);
@@ -38,3 +38,7 @@ Tree & addMother(string son , string Mother);
         bool findMe(Tree *root, string name_search);
     };
 }
+
+
+
+

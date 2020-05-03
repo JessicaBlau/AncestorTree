@@ -9,15 +9,28 @@
 #include <iomanip>
 #include <queue>
 
-#define COUNT 10
+#define COUNT 100
 
 
 using namespace family;
-static Tree* node=NULL;
+// static family::Tree a ("0");
+/*static &Tree node=a;*/
+static Tree *node=NULL;
+bool flag=false;
+bool flag2=false;
     Tree &Tree::addFather(string son, string father) {
-        if (findMe(this, son)) {
+       // cout<<"i am a this: " << this->name<<endl;
+        node=NULL;
+        flag=flag2= false;
+
+        if (findMe(this, son)== true) {
             //cout<<node<<endl;
-             node->father= new Tree(father,node);
+            if(node->father!=NULL  ){
+                if(node->father->name!="0")
+                throw exception();
+            }
+            cout<< "i am a son " << node->name<<endl;
+             node->father = new Tree (father,*node);
             //cout<<"father"<<endl;
              node->father->gender=0;
 
@@ -30,8 +43,16 @@ static Tree* node=NULL;
     }
 
     Tree &Tree::addMother(string son, string Mother) {
+        node=NULL;
+        flag=flag2= false;
+
         if (findMe(this,son)){
-            node->Mother=new Tree(Mother,node);
+            if(node->Mother!=NULL){
+                if(node->Mother->name!="0")
+                throw exception();
+            }
+            cout<< "i am a son " << node->name<<endl;
+            node->Mother= new Tree (Mother,*node);
             node->Mother->gender=1;
 
         }
@@ -73,17 +94,14 @@ void Tree::print2DUtil(Tree *root, int space) {
         print2DUtil(root->Mother, space);
     }
 static int count=0;
-    bool flag=false;
-    bool flag2=false;
+
     bool Tree::findMe(Tree *root, string name_search) {
-       // node=NULL;
-        if (root->name == name_search) {
-            node = root;
+
+        if (root->name==name_search) {
+            node=root;
             return true;
         }
-        if (root->Mother == NULL && root->father == NULL) {
-            return false;
-        }
+        else
         if(root->father!=NULL) {
             flag=findMe(root->father, name_search);
         }
@@ -91,27 +109,48 @@ static int count=0;
             flag2=findMe(root->Mother, name_search);
         }
         return (flag2 || flag);
+//        if (root->Mother == NULL && root->father == NULL) {
+//            return false;
+//        }
+
+
     }
     void Tree::remove(string name) {
         //cout<<this->name<<endl;
         if (this->name==name){
            throw std::exception();
         }
+        flag=flag2= false;
+        node=NULL;
         if (findMe(this, name)) {
-            Tree *temp=node->son;
-            if(temp->father->name==name){
-                temp->father=NULL;
-            }else{
-                temp->Mother=NULL;
-            }
+            cout<<"qqqqqqqqqqq "<< name<<endl;
+            Tree &temp=*node;
+            cout<< "fonished"<<endl;
+//            if(temp.father!=NULL) {
+//                cout<< "fonished"<<endl;
+                temp.father = NULL;
+//            }
+//                if(temp.Mother!=NULL){
+                   cout<< "fonished"<<endl;
+                    temp.Mother=NULL;
+//            }
+            cout<< "1"<<endl;
+               Tree *a=new Tree("0");
+            cout<< "2"<<endl;
+             temp=*a;
+            cout<< "3"<<endl;
+
+
+
 
         } else {
             __throw_out_of_range("This name not exit in Tree");
         }
     }
 string Tree::relation(string name){
+    flag=flag2= false;
 
-        if(findMe(this,name) ){
+    if(findMe(this,name) ){
 
     if (node!=NULL) {
         int level = getLevel(this, name);
@@ -120,10 +159,10 @@ string Tree::relation(string name){
             return "me";
         }
         if (level == 2 && node->gender == 0) {
-            return "Father";
+            return "father";
         }
         if (level == 2 && node->gender == 1) {
-            return "Mother";
+            return "mother";
         }
         if (level == 3 && node->gender == 0) {
             return "grandfather";
@@ -198,30 +237,32 @@ void Tree::getNodesAtDistance(Tree *root, int distance)
 //        i++;
         return;
     }
-    if(root->father==NULL && root->Mother==NULL) {
-        return;
-    }
 
-    if(root->Mother==NULL){
-         getNodesAtDistance(root->father,distance-1);
-    }
-    if(root->father==NULL){
+
+    if(root->Mother!=NULL){
          getNodesAtDistance(root->Mother,distance-1);
     }
+    if(root->father!=NULL){
+         getNodesAtDistance(root->father,distance-1);
+    }
 
-     getNodesAtDistance(root->Mother, distance - 1);
-     getNodesAtDistance(root->father, distance - 1);
+
 }
 string Tree::find(string relation)
 {
+    if (relation=="grandfatrher" ||relation=="grandfatrher   " ||relation=="friend"){
+        throw exception();
+    }
 
     string gender = "";
     if (relation == "me")
         return this->name;
     if (relation.at(0) == 'm')
+        if(this->Mother->name!="0")
         return this->Mother->name;
     if (relation.at(0) == 'f')
-        return this->father->name;
+        if(this->father->name!="0")
+            return this->father->name;
     int size = relation.size();
     if(size>6) {
         char check = relation.at(size - 6);
@@ -232,15 +273,19 @@ string Tree::find(string relation)
         if (relation.at(2) == 'a') {
             if (gender == "father") {
                 if (this->father->father != NULL)
-                    return this->father->father->name;
+                    if(this->father->father->name!="0")
+                        return this->father->father->name;
                 if (this->Mother->father != NULL)
-                    return this->Mother->father->name;
+                    if(this->Mother->father->name!="0")
+                        return this->Mother->father->name;
             } else //mother
             {
                 if (this->father->Mother != NULL)
+                    if(this->father->Mother->name!="0")
                     return this->father->Mother->name;
                 if (this->Mother->Mother != NULL)
-                    return this->Mother->father->name;
+                    if(this->Mother->Mother->name!="0")
+                    return this->Mother->Mother->name;
             }
         }
     }
@@ -248,34 +293,63 @@ string Tree::find(string relation)
     if(relation.at(0)!='g'){
         throw std::exception();
     }
+    bool f=false;
+    for (int i=0; i<relation.size();i++) {
+        if (relation.at(i)=='-')
+            f=true;
+    }
+    if(!f){
+        throw exception();
+    }
     int count = 3; //levels in tree
     for (size_t i = 0; i < relation.size(); i++)
     {
         if (relation.at(i) == '-')
             count++;
     }
-   //cout<<count<<endl;
+   cout<<count<<endl;
+    list.clear();
     vector<string> list = getNodesAtDistance(count);
-    //cout<<"size"+list.size();
-
+    cout<<"size"<<list.size()<<endl;
+        if(list.size()==1){
+            cout<< "in list "<<list.at(0)<<endl;
+        }
+        bool r=false;
     for (size_t i = 0; i < list.size(); i++) {
+        cout<<list.at(i)<<endl;
+        flag=flag2= false;
         bool flag = findMe(this, list.at(i));
        // cout<<flag;
         if (flag == true) {
             if (gender == "father") {
                 if (node->gender==0){
+                    if(node->name!="0"){
+                    r= true;
                 return node->name;
+                    }
             }}
              else {
-                if (node->gender == 1)
-                    return node->name;
+                if (node->gender == 1){
+                    if(node->name!="0") {
+                        r = true;
+                        return node->name;
+                    }
+
+                }
             }
         }else{
             throw std::exception();
         }
 
         }
+    if(!r){
+        throw exception();
+    }
 
 
 
     }
+
+
+
+
