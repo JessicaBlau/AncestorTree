@@ -31,4 +31,9 @@ printf "### Score $i: ${grades[$i]}\n"
 IFS='+' average_grade=$(echo "scale=1;(${grades[*]})/${#grades[@]}"|bc)
 printf "\n\nGrade: $average_grade\n\n"
 
+printf "\n\n*** Grade Ancestor-Tree Part B *** \n\n"
+
+make -f Makefile clean
+call make -f Makefile test
+call timeout 3 ./test
 make -f Makefile --silent clean
