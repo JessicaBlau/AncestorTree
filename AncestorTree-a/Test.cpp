@@ -52,21 +52,17 @@ TEST_CASE("Test functions-A,B.C tree") {
             CHECK(T3.find("great-grandfather")==string("G"));
             CHECK(T3.find("great-great-grandfather")==string("H"));
     T3.remove("E");
-    ////exception relation afret remove 'E' in Tree
-            cout<<T3.relation("E");
+    ////exception relation after remove 'E' in Tree
             CHECK_THROWS(T3.relation("E"));
             CHECK_THROWS(T3.relation("G"));
             CHECK_THROWS(T3.relation("H"));
             CHECK_THROWS(T3.relation("F"));
     ///exception find after remove 'E' in Tree
-         //   CHECK_THROWS(T2.find("grandmother");
-//            CHECK_THROWS(T3.find("great-grandfather"));
-//            CHECK_THROWS(T3.find("great-great-grandfather"));
-//            CHECK_THROWS(T3.find("great-grandmother"));
+           CHECK_THROWS(T3.find("great-grandfather"));
+           CHECK_THROWS(T3.find("great-great-grandfather"));
+           CHECK_THROWS(T3.find("great-grandmother"));
     //remove the root in the Tree
      CHECK_THROWS(T3.remove("A"));
-
-
 }
 TEST_CASE("test all functions in yosef tree") {
     family::Tree T("Yosef"); // Yosef is the "root" of the tree (the youngest person).
